@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Telegram shop bot: clickable sample of the order flow</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;background:#eef1f5;color:#1d2733;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:1160px;margin:0 auto;padding:20px}
+h1{font-size:23px;margin:0 0 4px}
+.sub{color:#5b6875;margin:0 0 18px;max-width:820px}
+.grid{display:grid;grid-template-columns:400px 1fr;gap:22px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.phone{background:#fff;border-radius:18px;box-shadow:0 8px 30px rgba(20,40,70,.15);overflow:hidden;display:flex;flex-direction:column;height:690px}
+.top{background:#517da2;color:#fff;padding:10px 14px;display:flex;gap:10px;align-items:center}
+.ava{width:38px;height:38px;border-radius:50%;background:#f0b44c;display:flex;align-items:center;justify-content:center;font-weight:700;color:#5a3a00}
+.top b{display:block;font-size:15px}.top small{opacity:.8}
+#chat{flex:1;overflow-y:auto;padding:12px;background:#dfe7ee}
+.msg{max-width:86%;margin:6px 0;padding:8px 11px;border-radius:12px;white-space:pre-line;font-size:14px;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.bot{background:#fff;border-top-left-radius:4px}
+.me{background:#e1f7cb;margin-left:auto;border-top-right-radius:4px}
+.kb{display:grid;gap:4px;margin:4px 0 10px;max-width:86%}
+.kb .row{display:flex;gap:4px}
+.kb button{flex:1;border:0;border-radius:8px;background:rgba(81,125,162,.85);color:#fff;padding:8px 6px;font:inherit;font-size:13px;cursor:pointer}
+.kb button:hover{background:#3f6a8f}
+.kb button[disabled]{background:#9fb3c4;cursor:default}
+.inv{border-left:3px solid #517da2;padding-left:8px;margin-top:6px}
+.inv .pay{display:block;margin-top:8px;text-align:center;background:#517da2;color:#fff;border-radius:8px;padding:7px}
+.bar{display:flex;gap:6px;padding:8px;border-top:1px solid #e3e8ee}
+.bar input{flex:1;border:1px solid #cfd8e1;border-radius:18px;padding:8px 12px;font:inherit}
+.bar button{border:0;background:#517da2;color:#fff;border-radius:18px;padding:0 14px;font:inherit;cursor:pointer}
+.card{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(20,40,70,.08);padding:16px 18px;margin-bottom:18px}
+.card h2{font-size:17px;margin:0 0 10px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:5px 6px;border-bottom:1px solid #edf0f3}
+th{color:#5b6875;font-weight:600}
+td.n{text-align:right;white-space:nowrap}
+.low{color:#b3261e;font-weight:600}
+.stock input{width:52px;padding:2px 4px;border:1px solid #cfd8e1;border-radius:5px;font:inherit}
+.scroll{max-height:250px;overflow-y:auto}
+.tag{display:inline-block;font-size:12px;background:#e7eef5;border-radius:10px;padding:1px 8px;margin-left:4px}
+ul{margin:6px 0 0 18px;padding:0}li{margin:3px 0}
+code{background:#eef1f5;border-radius:4px;padding:0 4px;font-size:13px}
+pre{background:#1d2733;color:#dce6f0;border-radius:8px;padding:12px;overflow-x:auto;font-size:12.5px;line-height:1.45}
+#orders .empty{color:#8a96a3}
+.signoff{margin:26px 0 8px;color:#5b6875;font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Telegram shop bot: a clickable sample of the order flow</h1>
+<p class="sub">Try the chat on the left: browse the catalog, add products, check out and pay (test mode). The panel on the right is the shop owner's side: stock drops as orders come in, low stock is flagged, and every submitted order lands in the order list. The products are made-up demo items; the real bot uses your own up to 30 products.</p>
+<div class="grid">
+ <div class="phone">
+  <div class="top"><div class="ava">S</div><div><b>Demo Shop Bot</b><small>bot</small></div></div>
+  <div id="chat"></div>
+  <div class="bar"><input id="txt" placeholder="Type a message (try: start)"><button id="send">Send</button></div>
+ </div>
+ <div>
+  <div class="card"><h2>Owner: inventory <span class="tag" id="lowcount"></span></h2>
+   <div class="scroll"><table><thead><tr><th>Product</th><th>Category</th><th class="n">Price</th><th class="n">Stock</th></tr></thead><tbody id="invtab"></tbody></table></div>
+   <p style="margin:8px 0 0;font-size:13px;color:#5b6875">Change a stock number and the chat follows at once. At 0 the product shows as sold out; at 3 or less the owner gets a low-stock alert.</p>
+  </div>
+  <div class="card"><h2>Owner: orders</h2><div id="orders"><span class="empty">No orders yet. Place one in the chat.</span></div></div>
+  <div class="card"><h2>What the real bot does</h2>
+   <ul>
+    <li>Catalog of up to 30 products in categories, each with photo, description, price and live stock.</li>
+    <li>Cart with + / - per item, totals, and stock checks so nobody can order more than you have.</li>
+    <li>Checkout asks for name, phone and delivery or pick-up, then sends a Telegram invoice. Payment goes through Telegram Payments with the provider you connect in BotFather (for example Stripe), so card data never touches the bot.</li>
+    <li>On successful payment the order is saved, stock is reduced, the customer gets a receipt and the owner gets a message with the order.</li>
+    <li>Owner commands in Telegram: stock, setstock, orders, ship 1001 (tells the customer the order is on its way), low-stock alerts, CSV export of orders.</li>
+    <li>Products can be edited from a simple spreadsheet (CSV) or with owner commands, no code changes.</li>
+    <li>Python with aiogram 3 and SQLite; runs on any small VPS or a free-tier host, with a start script and a short setup guide.</li>
+   </ul>
+  </div>
+  <div class="card"><h2>How the code is laid out</h2>
+<pre>shopbot/
+  bot.py            start, routers, polling or webhook
+  catalog.py        categories, product cards, cart buttons
+  checkout.py       name / phone / delivery steps, invoice, payment
+  owner.py          stock, setstock, orders, ship commands, alerts, CSV
+  db.py             SQLite: products, carts, orders, order_items
+  products.csv      your 30 products (edit in Excel)
+  .env.example      BOT_TOKEN, PAYMENT_TOKEN, OWNER_ID, CURRENCY
+  README.md         setup in 10 minutes</pre>
+  </div>
+ </div>
+</div>
+<p class="signoff">Emil, Digital Assistant at WIGGEN DIGITAL (Norway), org. no. 934956605</p>
+</div>
+<script>
+const P=[
+["Classic T-shirt","Clothing",25,12],["Hoodie","Clothing",49,6],["Cap","Clothing",19,9],["Socks (3 pairs)","Clothing",14,20],
+["Ceramic mug","Home",16,15],["Travel mug","Home",24,3],["Scented candle","Home",18,8],["Cushion cover","Home",22,5],
+["Notebook A5","Stationery",9,30],["Gel pens (5)","Stationery",7,25],["Sticker pack","Stationery",5,40],["Desk planner","Stationery",15,2],
+["Tote bag","Accessories",15,14],["Keyring","Accessories",6,22],["Phone stand","Accessories",12,7],["Water bottle","Accessories",21,0]
+].map((p,i)=>({id:i+1,name:p[0],cat:p[1],price:p[2],stock:p[3]}));
+const cart={};let step=null,form={},orderNo=1000,orders=[];
+const chat=document.getElementById('chat');
+const money=v=>'A$'+v.toFixed(2);
+function say(text,who){const d=document.createElement('div');d.className='msg '+(who||'bot');d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight;return d}
+function kb(rows){const k=document.createElement('div');k.className='kb';rows.forEach(r=>{const row=document.createElement('div');row.className='row';r.forEach(([label,fn,dis])=>{const b=document.createElement('button');b.textContent=label;if(dis)b.disabled=true;else b.onclick=()=>{k.querySelectorAll('button').forEach(x=>x.disabled=true);say(label,'me');setTimeout(fn,250)};row.appendChild(b)});k.appendChild(row)});chat.appendChild(k);chat.scrollTop=chat.scrollHeight}
+function cartCount(){return Object.values(cart).reduce((a,b)=>a+b,0)}
+function cartTotal(){return Object.entries(cart).reduce((a,[id,q])=>a+P[id-1].price*q,0)}
+function menu(){step=null;say('Welcome to Demo Shop. What would you like to do?');kb([[['Catalog',cats],['Cart ('+cartCount()+')',showCart]],[['My orders',myOrders],['Help',help]]])}
+function help(){say('Browse the catalog, add items to your cart, then check out. You pay inside Telegram; we confirm your order right away.');kb([[['Back to menu',menu]]])}
+function cats(){const c=[...new Set(P.map(p=>p.cat))];say('Choose a category:');kb(c.map(x=>[[x+' ('+P.filter(p=>p.cat==x).length+')',()=>list(x)]]).concat([[['Back to menu',menu]]]))}
+function list(c){say(c+':');kb(P.filter(p=>p.cat==c).map(p=>[[p.name+' · '+money(p.price)+(p.stock?'':' · sold out'),()=>card(p.id)]]).concat([[['Categories',cats],['Cart ('+cartCount()+')',showCart]]]))}
+function card(id){const p=P[id-1];const inCart=cart[id]||0;
+ say(p.name+'\n'+money(p.price)+'\n'+(p.stock?('In stock: '+p.stock):'Sold out')+(inCart?'\nIn your cart: '+inCart:''));
+ if(!p.stock){kb([[['Back to '+p.cat,()=>list(p.cat)]]]);return}
+ kb([[['Add 1 to cart',()=>add(id)]],[['Back to '+p.cat,()=>list(p.cat)],['Cart ('+cartCount()+')',showCart]]])}
+function add(id){const p=P[id-1];if((cart[id]||0)>=p.stock){say('Sorry, only '+p.stock+' left of '+p.name+'.');kb([[['Back to '+p.cat,()=>list(p.cat)],['Cart ('+cartCount()+')',showCart]]]);return}
+ cart[id]=(cart[id]||0)+1;say('Added: '+p.name+'. Cart total '+money(cartTotal())+'.');kb([[['Add one more',()=>add(id)]],[['Back to '+p.cat,()=>list(p.cat)],['Cart ('+cartCount()+')',showCart]]])}
+function showCart(){const e=Object.entries(cart).filter(([i,q])=>q>0);
+ if(!e.length){say('Your cart is empty.');kb([[['Catalog',cats]]]);return}
+ say('Your cart:\n'+e.map(([i,q])=>q+' × '+P[i-1].name+'  '+money(P[i-1].price*q)).join('\n')+'\n\nTotal: '+money(cartTotal()));
+ kb(e.map(([i,q])=>[['− '+P[i-1].name,()=>{cart[i]--;if(!cart[i])delete cart[i];showCart()}],['+',()=>{if(cart[i]<P[i-1].stock)cart[i]++;else say('No more in stock.');showCart()}]]).concat([[['Check out',checkout]],[['Keep shopping',cats],['Empty cart',()=>{for(const k in cart)delete cart[k];menu()}]]]))}
+function checkout(){step='name';say('Checkout 1/3: what name should we put on the order? (type it below)');document.getElementById('txt').focus()}
+function onText(t){if(step=='name'){form.name=t;step='phone';say('Checkout 2/3: a phone number for the delivery driver? (any made-up number works here)')}
+ else if(step=='phone'){form.phone=t;step=null;say('Checkout 3/3: delivery or pick-up?');kb([[['Delivery (+A$8.00)',()=>{form.ship=8;invoice()}],['Pick-up (free)',()=>{form.ship=0;invoice()}]]])}
+ else if(t.toLowerCase().includes('start'))menu(); else {say("I didn't catch that. Use the buttons, or type start for the menu.")}}
+function invoice(){const tot=cartTotal()+form.ship;const d=say('');d.innerHTML='';const b=document.createElement('div');b.className='inv';
+ b.textContent='Invoice: Demo Shop order\n'+Object.entries(cart).map(([i,q])=>q+' × '+P[i-1].name).join(', ')+(form.ship?'\nDelivery A$8.00':'\nPick-up')+'\nTotal '+money(tot);
+ d.appendChild(b);const t=document.createElement('span');t.className='pay';t.textContent='Pay '+money(tot)+' (test mode)';b.appendChild(t);
+ kb([[['Pay '+money(tot),()=>paid(tot)]],[['Cancel',menu]]])}
+function paid(tot){orderNo++;const items=Object.entries(cart).map(([i,q])=>{P[i-1].stock-=q;return q+' × '+P[i-1].name});
+ orders.unshift({no:orderNo,name:form.name,phone:form.phone,items,tot,ship:form.ship?'Delivery':'Pick-up',status:'Paid'});
+ for(const k in cart)delete cart[k];renderInv();renderOrders();
+ say('Payment received. Thank you, '+form.name+'!\nOrder #'+orderNo+' is confirmed: '+items.join(', ')+'.\nTotal paid '+money(tot)+'. We will message you when it ships.');
+ kb([[['My orders',myOrders],['Back to menu',menu]]])}
+function myOrders(){if(!orders.length){say('You have no orders yet.')}else say(orders.map(o=>'#'+o.no+' · '+money(o.tot)+' · '+o.status).join('\n'));kb([[['Back to menu',menu]]])}
+function renderInv(){const tb=document.getElementById('invtab');tb.innerHTML='';let low=0;
+ P.forEach(p=>{const tr=document.createElement('tr');if(p.stock<=3)low++;
+  tr.innerHTML='<td></td><td></td><td class="n"></td><td class="n stock"><input type="number" min="0"></td>';
+  tr.children[0].textContent=p.name;if(p.stock<=3)tr.children[0].className='low';tr.children[1].textContent=p.cat;tr.children[2].textContent=money(p.price);
+  const inp=tr.querySelector('input');inp.value=p.stock;inp.onchange=()=>{p.stock=Math.max(0,parseInt(inp.value)||0);renderInv()};tb.appendChild(tr)});
+ document.getElementById('lowcount').textContent=low+' low or sold out'}
+function renderOrders(){const o=document.getElementById('orders');if(!orders.length)return;
+ o.innerHTML='<table><thead><tr><th>#</th><th>Customer</th><th>Items</th><th class="n">Total</th><th>Status</th></tr></thead><tbody></tbody></table>';
+ const tb=o.querySelector('tbody');orders.forEach(x=>{const tr=document.createElement('tr');tr.innerHTML='<td></td><td></td><td></td><td class="n"></td><td></td>';
+  tr.children[0].textContent=x.no;tr.children[1].textContent=x.name+' · '+x.ship;tr.children[2].textContent=x.items.join(', ');tr.children[3].textContent=money(x.tot);
+  const s=document.createElement('button');s.textContent=x.status=='Paid'?'Mark shipped':'Shipped';s.disabled=x.status!='Paid';
+  s.onclick=()=>{x.status='Shipped';say('Good news: order #'+x.no+' has shipped.');renderOrders()};tr.children[4].appendChild(s);tb.appendChild(tr)})}
+const txt=document.getElementById('txt');
+function sendTxt(){const t=txt.value.trim();if(!t)return;txt.value='';say(t,'me');setTimeout(()=>onText(t),250)}
+document.getElementById('send').onclick=sendTxt;txt.onkeydown=e=>{if(e.key=='Enter')sendTxt()};
+renderInv();say('Start','me');menu();
+</script>
+</body>
+</html>
