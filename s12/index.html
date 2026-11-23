@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Sample: n8n lead intake workflow with retries and error alerts</title>
+<style>
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f5f6fa;color:#1d2433;line-height:1.55}
+.w{max-width:980px;margin:0 auto;padding:32px 20px}
+h1{font-size:28px;margin:0 0 8px} h2{font-size:19px;margin:32px 0 10px}
+.card{background:#fff;border:1px solid #e1e4ee;border-radius:14px;padding:20px;margin:16px 0}
+svg{width:100%;height:auto;font-family:inherit}
+table{width:100%;border-collapse:collapse;font-size:15px} td,th{text-align:left;padding:8px;border-bottom:1px solid #eceef4;vertical-align:top}
+.btn{display:inline-block;background:#ff6d5a;color:#fff;border:0;border-radius:8px;padding:10px 16px;font-size:15px;cursor:pointer;margin:4px 8px 4px 0}
+code{white-space:nowrap;background:#eef0f6;padding:1px 5px;border-radius:4px;font-size:14px}
+pre{background:#1d2433;color:#e8ebf3;padding:14px;border-radius:10px;overflow:auto;max-height:320px;font-size:12.5px}
+.muted{color:#667} .sign{margin-top:40px;color:#667;font-size:14px}
+</style></head><body><div class="w">
+<h1>n8n lead intake workflow: form to HubSpot, email and Slack</h1>
+<p class="muted">A working sample built for this job: two importable n8n workflows (JSON, n8n 1.x) that show how I build automations that run without babysitting. Download them below and use Import from File in n8n.</p>
+<div class="card"><svg viewBox="0 0 1020 290" role="img" aria-label="Workflow diagram"><line x1="150" y1="155" x2="190" y2="155" stroke="#9aa3b5" stroke-width="2"/><line x1="320" y1="155" x2="360" y2="155" stroke="#9aa3b5" stroke-width="2"/><line x1="490" y1="150" x2="530" y2="90" stroke="#9aa3b5" stroke-width="2"/><line x1="490" y1="165" x2="530" y2="235" stroke="#9aa3b5" stroke-width="2"/><line x1="660" y1="80" x2="700" y2="50" stroke="#9aa3b5" stroke-width="2"/><line x1="660" y1="90" x2="700" y2="135" stroke="#9aa3b5" stroke-width="2"/><line x1="830" y1="45" x2="870" y2="45" stroke="#9aa3b5" stroke-width="2"/><g><rect x="20" y="130" width="130" height="52" rx="10" fill="#fff" stroke="#ff6d5a" stroke-width="2"/><rect x="20" y="130" width="8" height="52" rx="3" fill="#ff6d5a"/><text x="38" y="151" font-size="11" fill="#667">Webhook</text><text x="38" y="170" font-size="13" font-weight="600" fill="#1d2433">New lead</text></g><g><rect x="190" y="130" width="130" height="52" rx="10" fill="#fff" stroke="#5a7bff" stroke-width="2"/><rect x="190" y="130" width="8" height="52" rx="3" fill="#5a7bff"/><text x="208" y="151" font-size="11" fill="#667">Set</text><text x="208" y="170" font-size="13" font-weight="600" fill="#1d2433">Normalize fields</text></g><g><rect x="360" y="130" width="130" height="52" rx="10" fill="#fff" stroke="#9b59b6" stroke-width="2"/><rect x="360" y="130" width="8" height="52" rx="3" fill="#9b59b6"/><text x="378" y="151" font-size="11" fill="#667">IF</text><text x="378" y="170" font-size="13" font-weight="600" fill="#1d2433">Valid email?</text></g><g><rect x="530" y="60" width="130" height="52" rx="10" fill="#fff" stroke="#ff7a59" stroke-width="2"/><rect x="530" y="60" width="8" height="52" rx="3" fill="#ff7a59"/><text x="548" y="81" font-size="11" fill="#667">HubSpot</text><text x="548" y="100" font-size="13" font-weight="600" fill="#1d2433">Upsert contact</text></g><g><rect x="530" y="210" width="130" height="52" rx="10" fill="#fff" stroke="#888" stroke-width="2"/><rect x="530" y="210" width="8" height="52" rx="3" fill="#888"/><text x="548" y="231" font-size="11" fill="#667">Respond</text><text x="548" y="250" font-size="13" font-weight="600" fill="#1d2433">422 invalid</text></g><g><rect x="700" y="20" width="130" height="52" rx="10" fill="#fff" stroke="#d93025" stroke-width="2"/><rect x="700" y="20" width="8" height="52" rx="3" fill="#d93025"/><text x="718" y="41" font-size="11" fill="#667">Gmail</text><text x="718" y="60" font-size="13" font-weight="600" fill="#1d2433">Welcome email</text></g><g><rect x="700" y="110" width="130" height="52" rx="10" fill="#fff" stroke="#4a154b" stroke-width="2"/><rect x="700" y="110" width="8" height="52" rx="3" fill="#4a154b"/><text x="718" y="131" font-size="11" fill="#667">Slack</text><text x="718" y="150" font-size="13" font-weight="600" fill="#1d2433">Alert sales</text></g><g><rect x="870" y="20" width="130" height="52" rx="10" fill="#fff" stroke="#2e9e5b" stroke-width="2"/><rect x="870" y="20" width="8" height="52" rx="3" fill="#2e9e5b"/><text x="888" y="41" font-size="11" fill="#667">Respond</text><text x="888" y="60" font-size="13" font-weight="600" fill="#1d2433">200 OK</text></g><text x="440" y="200" font-size="11" fill="#667">false</text><text x="470" y="105" font-size="11" fill="#667">true</text><g><rect x="20" y="230" width="150" height="52" rx="10" fill="#fff" stroke="#c0392b" stroke-width="2" stroke-dasharray="5 4"/><text x="34" y="251" font-size="11" fill="#667">Error Trigger</text><text x="34" y="270" font-size="13" font-weight="600" fill="#1d2433">Any failed run</text></g><line x1="170" y1="256" x2="220" y2="256" stroke="#9aa3b5" stroke-width="2"/><g><rect x="220" y="230" width="150" height="52" rx="10" fill="#fff" stroke="#4a154b" stroke-width="2" stroke-dasharray="5 4"/><text x="234" y="251" font-size="11" fill="#667">Slack</text><text x="234" y="270" font-size="13" font-weight="600" fill="#1d2433">Post error alert</text></g></svg></div>
+<h2>What it does</h2>
+<div class="card"><table>
+<tr><th>Step</th><th>Node</th><th>Why it is there</th></tr>
+<tr><td>1</td><td>Webhook <code>POST new-lead</code></td><td>Any form, landing page or Zap-style source posts the lead here.</td></tr>
+<tr><td>2</td><td>Set: Normalize fields</td><td>Trims names, lowercases the email and stamps the time, so HubSpot never gets duplicates that differ only in case or spaces.</td></tr>
+<tr><td>3</td><td>IF: Valid email?</td><td>Bad input is answered with 422 at once instead of failing three nodes later.</td></tr>
+<tr><td>4</td><td>HubSpot: Upsert contact</td><td>Creates or updates by email, so a repeat submission updates the same contact. Retries 3 times, 3 s apart, on rate limits or timeouts.</td></tr>
+<tr><td>5</td><td>Gmail + Slack</td><td>Welcome email to the lead and an alert to the sales channel, both with retries.</td></tr>
+<tr><td>6</td><td>Respond to Webhook</td><td>The form gets a clean JSON answer: 200 on success, 422 on invalid input.</td></tr>
+<tr><td>+</td><td>Error workflow</td><td>Any failed run, in this or any other workflow it is attached to, posts the workflow, node, error and execution id to <code>#automation-alerts</code>.</td></tr>
+</table></div>
+<h2>Reliability built in</h2>
+<div class="card"><ul>
+<li>Idempotent contact handling (upsert by normalized email), safe to re-run.</li>
+<li>Retry on fail on every external call (HubSpot, Gmail, Slack).</li>
+<li>A central error workflow, so problems surface in Slack instead of silently stopping.</li>
+<li>Executions saved on success and failure for quick troubleshooting.</li>
+<li>No credentials inside the files: you connect your own HubSpot, Gmail and Slack credentials after import.</li>
+</ul></div>
+<h2>Download</h2>
+<div class="card">
+<button class="btn" data-f="a">lead-intake.json</button><button class="btn" data-f="b">error-alerts.json</button>
+<p class="muted">After import: connect credentials, set the error workflow id in the lead workflow's settings, change the Slack channel names, activate.</p>
+<pre id="pv"></pre></div>
+<p class="sign">Emil, Digital Assistant at WIGGEN DIGITAL (Norway), org. no. 934956605</p>
+</div>
+<script type="application/json" id="a">{
+  "name": "Lead intake: form to HubSpot, email and Slack",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "new-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "b5044ac9-ff83-56af-b040-671d43f63973",
+      "name": "New lead (webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "email",
+              "value": "={{ ($json.body.email || '').trim().toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "firstName",
+              "value": "={{ ($json.body.first_name || '').trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "lastName",
+              "value": "={{ ($json.body.last_name || '').trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "source",
+              "value": "={{ $json.body.source || 'website-form' }}",
+              "type": "string"
+            },
+            {
+              "id": "a5",
+              "name": "receivedAt",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4a4b5627-90f5-54e2-9670-4b878303fdb8",
+      "name": "Normalize fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "^[^@\\s]+@[^@\\s]+\\.[a-z]{2,}$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e34b9f7c-bfad-5515-9c89-72e2348419a7",
+      "name": "Valid email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        440,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "appToken",
+        "resource": "contact",
+        "operation": "upsert",
+        "email": "={{ $json.email }}",
+        "additionalFields": {
+          "firstName": "={{ $json.firstName }}",
+          "lastName": "={{ $json.lastName }}"
+        },
+        "options": {}
+      },
+      "id": "3786b308-3311-5df6-be4a-639d5273f529",
+      "name": "Upsert contact in HubSpot",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2,
+      "position": [
+        680,
+        200
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Normalize fields').item.json.email }}",
+        "subject": "Thanks for reaching out",
+        "emailType": "text",
+        "message": "=Hi {{ $('Normalize fields').item.json.firstName || 'there' }},\n\nThanks for getting in touch. We received your request and will reply within one business day.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "f25c359e-c6d5-5dff-8061-8faed14b6937",
+      "name": "Send welcome email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        920,
+        120
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#new-leads",
+          "mode": "name"
+        },
+        "text": "=New lead: {{ $('Normalize fields').item.json.firstName }} {{ $('Normalize fields').item.json.lastName }} <{{ $('Normalize fields').item.json.email }}> from {{ $('Normalize fields').item.json.source }}",
+        "otherOptions": {}
+      },
+      "id": "0cef4e7b-5360-53e2-a68f-6efd5d769d65",
+      "name": "Alert sales in Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        920,
+        280
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true } }}",
+        "options": {}
+      },
+      "id": "7aae54bf-b5d7-5b79-af52-660b70f55218",
+      "name": "Reply 200 OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1160,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": false, \"error\": \"invalid email\" } }}",
+        "options": {
+          "responseCode": 422
+        }
+      },
+      "id": "0cca44e6-bc59-5b7d-ac20-9d6b2ea4c8b3",
+      "name": "Reply 422 invalid",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        420
+      ]
+    }
+  ],
+  "connections": {
+    "New lead (webhook)": {
+      "main": [
+        [
+          {
+            "node": "Normalize fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize fields": {
+      "main": [
+        [
+          {
+            "node": "Valid email?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid email?": {
+      "main": [
+        [
+          {
+            "node": "Upsert contact in HubSpot",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply 422 invalid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert contact in HubSpot": {
+      "main": [
+        [
+          {
+            "node": "Send welcome email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Alert sales in Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send welcome email": {
+      "main": [
+        [
+          {
+            "node": "Reply 200 OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "errorWorkflow": "REPLACE_WITH_ERROR_WORKFLOW_ID"
+  },
+  "pinData": {}
+}</script>
+<script type="application/json" id="b">{
+  "name": "Error alerts: any failed run to Slack",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "d4599aa8-2497-5b9f-b7cb-97e026b252ce",
+      "name": "On any workflow error",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#automation-alerts",
+          "mode": "name"
+        },
+        "text": "=Workflow failed: {{ $json.workflow.name }}\nNode: {{ $json.execution.lastNodeExecuted }}\nError: {{ $json.execution.error.message }}\nExecution id: {{ $json.execution.id }}",
+        "otherOptions": {}
+      },
+      "id": "6f20b07a-dcf7-526e-b94b-a72a52808cd6",
+      "name": "Post error to Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "On any workflow error": {
+      "main": [
+        [
+          {
+            "node": "Post error to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}</script>
+<script>
+const names={a:"lead-intake.json",b:"error-alerts.json"};
+document.getElementById("pv").textContent=document.getElementById("a").textContent;
+document.querySelectorAll("button[data-f]").forEach(b=>b.onclick=()=>{const id=b.dataset.f,t=document.getElementById(id).textContent;document.getElementById("pv").textContent=t;const u=URL.createObjectURL(new Blob([t],{type:"application/json"}));const l=document.createElement("a");l.href=u;l.download=names[id];l.click();setTimeout(()=>URL.revokeObjectURL(u),1000);});
+</script></body></html>
