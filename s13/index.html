@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Sample: responsive Mailchimp newsletter (PSD to HTML)</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eef0f3;color:#1d2330}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px}
+h1{font-size:26px;margin:0 0 6px}
+p.lead{margin:0 0 18px;color:#4a5263;max-width:820px;line-height:1.5}
+ul.notes{margin:0 0 22px;padding-left:20px;color:#333b4a;line-height:1.6;max-width:900px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+button{font:inherit;padding:9px 16px;border:1px solid #1d2330;background:#fff;border-radius:6px;cursor:pointer}
+button.on{background:#1d2330;color:#fff}
+.views{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
+.dev{background:#fff;border-radius:10px;padding:10px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.dev b{display:block;font-size:13px;color:#4a5263;margin:2px 4px 8px}
+.frame{border:1px solid #d6dae1;display:block;background:#f3eee8;overflow:hidden}
+#desk{width:680px}
+#mob{width:375px}
+pre{background:#11151d;color:#d7e0ee;padding:16px;border-radius:8px;overflow:auto;max-height:420px;font-size:12px;display:none}
+.sig{margin-top:30px;font-size:13px;color:#4a5263}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Responsive newsletter template, built for pasting into Mailchimp</h1>
+<p class="lead">A sample of the kind of hand-coded email I would build from your PSD. The same HTML file is shown below at desktop width (600 px content) and at phone width (375 px). The brand and content are made up for this sample; the grey blocks stand where your PSD images go once they are exported and uploaded to Mailchimp's Content Studio.</p>
+<ul class="notes">
+<li>Table-based layout with inline styles, so it holds together in Gmail, Outlook (desktop + web), Apple Mail and Yahoo.</li>
+<li>Two-column product row and footer stack into one column on phones (media query plus fluid fallback for clients that ignore media queries).</li>
+<li>Outlook "ghost tables" (MSO conditionals) keep the 600 px width in Outlook for Windows; bulletproof buttons work without images.</li>
+<li>Mailchimp-ready: <code>mc:edit</code> regions for text and images, preheader text, and the required merge tags (*|UNSUB|*, *|UPDATE_PROFILE|*, *|LIST:ADDRESSLINE|*).</li>
+<li>Paste into Mailchimp via "Code your own &rarr; Paste in code"; editable blocks stay editable for your team.</li>
+</ul>
+<div class="bar">
+<button id="bView" class="on">Preview</button>
+<button id="bCode">Show HTML source</button>
+<button id="bCopy">Copy HTML</button>
+</div>
+<pre id="code"></pre>
+<div class="views" id="views">
+<div class="dev"><b>Desktop (inbox width ~680 px)</b><div id="desk" class="frame"></div></div>
+<div class="dev"><b>Phone (375 px)</b><div id="mob" class="frame"></div></div>
+</div>
+<p class="sig">Emil, Digital Assistant at WIGGEN DIGITAL (Norway), org. no. 934956605</p>
+</div>
+<script type="text/html" id="email"><!DOCTYPE html>
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<title>*|MC:SUBJECT|*</title>
+<!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->
+<style>
+body,table,td{margin:0;padding:0}
+img{border:0;display:block;outline:none;text-decoration:none}
+a{color:#b4572e}
+@media screen and (max-width:620px){
+ .container{width:100% !important}
+ .col{display:block !important;width:100% !important;max-width:100% !important}
+ .px{padding-left:20px !important;padding-right:20px !important}
+ .h1{font-size:26px !important;line-height:32px !important}
+ .hero{height:200px !important}
+ .stack-gap{padding-top:18px !important}
+}
+</style>
+</head>
+<body style="margin:0;padding:0;background:#f3eee8;">
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">New winter blends are in, plus 15% off your next bag this week.&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f3eee8;">
+<tr><td align="center" style="padding:24px 10px;">
+<!--[if mso]><table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"><tr><td><![endif]-->
+<table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background:#ffffff;">
+ <tr><td class="px" style="padding:22px 32px;background:#2b1d16;" align="left">
+  <span style="font-family:Georgia,'Times New Roman',serif;font-size:22px;color:#f3e3cf;letter-spacing:1px;">NORTHFIELD ROASTERS</span>
+  <span style="font-family:Arial,sans-serif;font-size:12px;color:#c9b39b;float:right;line-height:28px;">*|DATE:F Y|*</span>
+ </td></tr>
+ <tr><td mc:edit="hero_image" class="hero" height="260" align="center" valign="middle" style="height:260px;background:#c9a27e;font-family:Arial,sans-serif;font-size:14px;color:#ffffff;">Hero image 600 &times; 260 (from PSD)</td></tr>
+ <tr><td class="px" mc:edit="intro" style="padding:32px 32px 8px;font-family:Arial,Helvetica,sans-serif;">
+  <h1 class="h1" style="margin:0 0 12px;font-family:Georgia,'Times New Roman',serif;font-size:32px;line-height:38px;color:#2b1d16;font-weight:normal;">The winter blends are here</h1>
+  <p style="margin:0 0 18px;font-size:16px;line-height:25px;color:#4b3f38;">Hi *|FNAME|*, three new roasts landed this week: a dark, chocolatey house blend, a bright single origin from Huila, and a decaf that actually tastes like coffee.</p>
+ </td></tr>
+ <tr><td class="px" align="left" style="padding:4px 32px 30px;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+   <td align="center" bgcolor="#b4572e" style="border-radius:4px;">
+    <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="#" style="height:46px;v-text-anchor:middle;width:220px;" arcsize="9%" stroke="f" fillcolor="#b4572e"><center style="color:#ffffff;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;">Shop the new roasts</center></v:roundrect><![endif]-->
+    <!--[if !mso]><!--><a href="#" style="display:inline-block;padding:13px 28px;font-family:Arial,sans-serif;font-size:16px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:4px;">Shop the new roasts</a><!--<![endif]-->
+   </td></tr></table>
+ </td></tr>
+ <tr><td class="px" style="padding:0 22px 26px;">
+  <!--[if mso]><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td width="278" valign="top"><![endif]-->
+  <table role="presentation" class="col" align="left" width="278" cellpadding="0" cellspacing="0" border="0" style="width:278px;max-width:278px;">
+   <tr><td style="padding:0 10px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+     <tr><td mc:edit="product1_img" height="170" align="center" style="height:170px;background:#e3d3c2;font-family:Arial,sans-serif;font-size:13px;color:#6b5a4e;">Product image 258 &times; 170</td></tr>
+     <tr><td mc:edit="product1_text" style="padding:14px 0 0;font-family:Arial,sans-serif;">
+      <p style="margin:0 0 4px;font-size:18px;color:#2b1d16;font-weight:bold;">House Dark</p>
+      <p style="margin:0 0 10px;font-size:14px;line-height:21px;color:#4b3f38;">Cocoa, toasted nuts, a long sweet finish. Built for espresso and moka pots.</p>
+      <a href="#" style="font-size:14px;font-weight:bold;color:#b4572e;">From $16 &rarr;</a>
+     </td></tr>
+    </table>
+   </td></tr>
+  </table>
+  <!--[if mso]></td><td width="278" valign="top"><![endif]-->
+  <table role="presentation" class="col" align="left" width="278" cellpadding="0" cellspacing="0" border="0" style="width:278px;max-width:278px;">
+   <tr><td class="stack-gap" style="padding:0 10px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+     <tr><td mc:edit="product2_img" height="170" align="center" style="height:170px;background:#d8c7b4;font-family:Arial,sans-serif;font-size:13px;color:#6b5a4e;">Product image 258 &times; 170</td></tr>
+     <tr><td mc:edit="product2_text" style="padding:14px 0 0;font-family:Arial,sans-serif;">
+      <p style="margin:0 0 4px;font-size:18px;color:#2b1d16;font-weight:bold;">Huila Single Origin</p>
+      <p style="margin:0 0 10px;font-size:14px;line-height:21px;color:#4b3f38;">Red apple, brown sugar and a clean, bright cup. Best as pour-over.</p>
+      <a href="#" style="font-size:14px;font-weight:bold;color:#b4572e;">From $19 &rarr;</a>
+     </td></tr>
+    </table>
+   </td></tr>
+  </table>
+  <!--[if mso]></td></tr></table><![endif]-->
+ </td></tr>
+ <tr><td class="px" mc:edit="offer" align="center" style="padding:26px 32px;background:#f7efe6;font-family:Arial,sans-serif;">
+  <p style="margin:0 0 6px;font-size:13px;letter-spacing:2px;color:#b4572e;font-weight:bold;">THIS WEEK ONLY</p>
+  <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:24px;line-height:30px;color:#2b1d16;">15% off your next bag</p>
+  <p style="margin:0;font-size:14px;color:#4b3f38;">Use code <strong>WINTER15</strong> at checkout.</p>
+ </td></tr>
+ <tr><td class="px" style="padding:26px 32px;background:#2b1d16;font-family:Arial,sans-serif;font-size:12px;line-height:19px;color:#c9b39b;" align="center">
+  <p style="margin:0 0 8px;"><a href="#" style="color:#f3e3cf;">Instagram</a> &nbsp;&middot;&nbsp; <a href="#" style="color:#f3e3cf;">Facebook</a> &nbsp;&middot;&nbsp; <a href="#" style="color:#f3e3cf;">Website</a></p>
+  <p style="margin:0 0 8px;">You are receiving this because you signed up at our shop.<br>*|LIST:ADDRESSLINE|*</p>
+  <p style="margin:0;"><a href="*|UPDATE_PROFILE|*" style="color:#f3e3cf;">Update preferences</a> &nbsp;&middot;&nbsp; <a href="*|UNSUB|*" style="color:#f3e3cf;">Unsubscribe</a></p>
+ </td></tr>
+</table>
+<!--[if mso]></td></tr></table><![endif]-->
+</td></tr>
+</table>
+</body>
+</html>
+</script>
+<script>
+var src=document.getElementById('email').textContent.trim();
+function show(id,html){var r=document.getElementById(id).attachShadow({mode:'open'});r.innerHTML=html;}
+show('desk',src);
+show('mob',src.replace('@media screen and (max-width:620px){','@media all{'));
+var code=document.getElementById('code');code.textContent=src;
+var bV=document.getElementById('bView'),bC=document.getElementById('bCode');
+bV.onclick=function(){code.style.display='none';document.getElementById('views').style.display='flex';bV.className='on';bC.className='';};
+bC.onclick=function(){code.style.display='block';document.getElementById('views').style.display='none';bC.className='on';bV.className='';};
+document.getElementById('bCopy').onclick=function(){navigator.clipboard.writeText(src).then(function(){document.getElementById('bCopy').textContent='Copied';});};
+</script>
+</body>
+</html>
